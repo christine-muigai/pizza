@@ -14,21 +14,26 @@ def create_restaurant_pizza():
     pizza_id = data.get('pizza_id')
     restaurant_id = data.get('restaurant_id')
 
-    
+    # Check for missing fields
     if price is None or pizza_id is None or restaurant_id is None:
         return jsonify({'error': 'Missing required fields'}), 400
 
-    rp = RestaurantPizza(price=price, pizza_id=pizza_id, restaurant_id=restaurant_id)
+    # Validate pizza and restaurant existence
+    pizza = Pizza.query.get(pizza_id)
+    restaurant = Restaurant.query.get(restaurant_id)
 
+    if not pizza or not restaurant:
+        return jsonify({'error': 'Pizza or Restaurant not found'}), 404
+
+    # Create and validate RestaurantPizza
+    rp = RestaurantPizza(price=price, pizza_id=pizza_id, restaurant_id=restaurant_id)
     if not rp.validate():
         return jsonify({'errors': ['Price must be between 1 and 30']}), 400
 
     db.session.add(rp)
     db.session.commit()
 
-    pizza = Pizza.query.get(pizza_id)
-    restaurant = Restaurant.query.get(restaurant_id)
-
+    # Respond with relevant data
     return jsonify({
         'id': rp.id,
         'price': rp.price,
@@ -45,3 +50,4 @@ def create_restaurant_pizza():
             'address': restaurant.address
         }
     }), 201
+
