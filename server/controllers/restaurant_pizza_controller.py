@@ -14,18 +14,17 @@ def create_restaurant_pizza():
     pizza_id = data.get('pizza_id')
     restaurant_id = data.get('restaurant_id')
 
-    # Check for missing fields
+    
     if price is None or pizza_id is None or restaurant_id is None:
         return jsonify({'error': 'Missing required fields'}), 400
 
-    # Validate pizza and restaurant existence
+    
     pizza = Pizza.query.get(pizza_id)
     restaurant = Restaurant.query.get(restaurant_id)
 
     if not pizza or not restaurant:
         return jsonify({'error': 'Pizza or Restaurant not found'}), 404
 
-    # Validate price range before creation
     if not (1 <= price <= 30):
         return jsonify({'errors': ['Price must be between 1 and 30']}), 400
 

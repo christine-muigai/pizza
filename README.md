@@ -33,7 +33,7 @@ Edit
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/pizza-api.git
+git clone https://github.com/christine-muigai/pizza.git
 cd pizza-api
 2. Set Up the Virtual Environment
 bash
