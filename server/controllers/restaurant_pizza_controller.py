@@ -25,15 +25,18 @@ def create_restaurant_pizza():
     if not pizza or not restaurant:
         return jsonify({'error': 'Pizza or Restaurant not found'}), 404
 
-    # Create and validate RestaurantPizza
-    rp = RestaurantPizza(price=price, pizza_id=pizza_id, restaurant_id=restaurant_id)
-    if not rp.validate():
+    # Validate price range before creation
+    if not (1 <= price <= 30):
         return jsonify({'errors': ['Price must be between 1 and 30']}), 400
 
-    db.session.add(rp)
-    db.session.commit()
+    try:
+        rp = RestaurantPizza(price=price, pizza_id=pizza_id, restaurant_id=restaurant_id)
+        db.session.add(rp)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to create RestaurantPizza'}), 500
 
-    # Respond with relevant data
     return jsonify({
         'id': rp.id,
         'price': rp.price,
@@ -50,4 +53,5 @@ def create_restaurant_pizza():
             'address': restaurant.address
         }
     }), 201
+
 
